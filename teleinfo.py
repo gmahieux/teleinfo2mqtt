@@ -4,6 +4,8 @@ import logging
 import signal
 import time
 import json
+import termios
+import os
 from collections import deque
 from datetime import datetime
 
@@ -43,9 +45,6 @@ def _reverse(string):
 
 def _bin_to_decimal(bin_string):
     return int(bin_string,2)
-
-
-
 
 def _readframe(ser):
     frame = dict()
@@ -308,16 +307,16 @@ if __name__ == '__main__':
         logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
         linky_legacy_mode = cfg['linky']['legacy_mode']
         linky_ignored_keys = cfg['linky']['ignored_keys']
-        linky_port = cfg['linky']['port']
+        linky_port = os.environ.get("LINKY_PORT", cfg['linky']['port'])
         linky_register_mapping = cfg['linky']['register_mapping']
         ha_reset_discovery = cfg['ha']['reset_discovery']
         ha_key_mapping = cfg['ha']['key_mapping']
-        mqtt_send_data = cfg['mqtt']['send_data']
-        mqtt_server = cfg['mqtt']['server_ip']          
-        mqtt_port = int(cfg['mqtt']['port'])           
+        mqtt_send_data = cfg['mqtt'].get('send_data',true)
+        mqtt_server = os.environ.get("MQTT_IP", cfg['mqtt']['server_ip']) 
+        mqtt_port = int(os.environ.get("MQTT_PORT", cfg['mqtt']['port']))      
         mqtt_keepalive = int(cfg['mqtt']['keepalive']) 
-        mqtt_user = cfg['mqtt']['user']                
-        mqtt_password = cfg['mqtt']['password']       
+        mqtt_user = os.environ.get("MQTT_USER", cfg['mqtt']['user'])
+        mqtt_password = os.environ.get("MQTT_PWD", cfg['mqtt']['password'])
     except KeyError as exc:
         logging.error(f'Key {exc} is missing in configuration file')
         raise SystemExit(1)
