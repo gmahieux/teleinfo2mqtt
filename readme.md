@@ -1,6 +1,6 @@
 ## Teleinfo 2 MQTT
 
-![Docker image](https://github.com/OWNER/REPOSITORY/actions/workflows/docker-publish/badge.svg)
+![Docker image](https://github.com/gmahieux/teleinfo2mqtt/actions/workflows/docker-publish.yml/badge.svg)
 
 This project allows retrieving Linky's teleinfo data and send it to MQTT so that it can be plug, for example, to Home Assistant.
 
