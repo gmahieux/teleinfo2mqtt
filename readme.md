@@ -21,21 +21,21 @@ See [Enedis-NOI-CPT_54E](https://www.enedis.fr/media/2035/download) for more inf
 
 The easiest way to run the script is using container. You can either run the container directly with the Docker CLI or use docker compose
 
-#### Docker
+##### - Using Docker
 
-`docker run --device=path/to/serial/port -e LINKY_PORT=path/to/serial/port -e MQTT_IP=xxx.xxx.xxx.xxx gmahieux/teleinfo2mqtt`
+```docker run -d --device=path/to/serial/port -e LINKY_PORT=path/to/serial/port -e MQTT_IP=xxx.xxx.xxx.xxx gmahieux/teleinfo2mqtt```
 
 See the [configuration](#configuration) section to get the other environment variable you can add to the command line
 
-Note: If some configuration parameters that cannot be modified with envvars have to be customized. The easiest way is to bind-mount the config file
+[!NOTE]
+If some configuration parameters that cannot be modified with envvars have to be customized. The easiest way is to bind-mount the config file :
+```docker run [...other parameters here...] -v [PATH_TO_LOCAL_CONFIG_YML]:config.yml:ro gmahieux/teleinfo2mqtt```
 
-`docker run [...other parameters here...] -v [PATH_TO_LOCAL_CONFIG_YML]:config.yml:ro gmahieux/teleinfo2mqtt` 
-
-#### Docker Compose
+##### - Using Docker Compose
 
 TBD
 
-### Directly from the script
+### Directly from the sources
 
 #### Install python
 
