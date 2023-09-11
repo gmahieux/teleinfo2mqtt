@@ -1,0 +1,324 @@
+log_level: info             
+
+linky:
+  legacy_mode: false            # Mode TIC historique = true, sinon false
+  ignored_keys: [SMAXSN-1, SINST]
+  port: '/dev/serial/by-id/usb-CH2i_uTinfo-V3.0_TINFO-1300-if00'    # Port série du Raspberry Pi
+  register_mapping:
+    R_COUPURE: [
+      Fermé, 
+      Ouvert sur surpuissance,
+      Ouvert sur surtension,
+      Ouvert sur délestage,ouvert sur ordre CPL ou Euridis,
+      Ouvert sur une surchauffe avec une valeur du courant supérieure au courant de commutation maximal,
+      Ouvert sur une surchauffe avec une valeur de courant inférieure au courant de commutation maximal
+    ]
+    R_MODE: [Historique, Standard]
+    R_TARIF_FOUR: [
+      Index 1,
+      Index 2,
+      Index 3,
+      Index 4,
+      Index 5,
+      Index 6,
+      Index 7,
+      Index 8,
+      Index 9,
+      Index 10
+    ]
+    R_TARIF_DIST: [
+      Index 1,
+      Index 2,
+      Index 3,
+      Index 4
+    ]
+    R_COMM: [
+      désactivée,
+      activée sans sécurité,
+      valeur inattendue,
+      activée avec sécurité
+    ]
+    R_CPL: [
+      New/Unlock,
+      New/Lock,
+      Registered,
+    ]
+    R_COULEUR_J: [
+      Pas d‘annonce,
+      Bleu,
+      Blanc,
+      Rouge
+    ]
+    R_COULEUR_J+1: [
+      Pas d‘annonce,
+      Bleu,
+      Blanc,
+      Rouge
+    ]
+    R_PREAVIS_POINTE: [
+      Pas de préavis en cours,
+      Préavis PM1 en cours,
+      Préavis PM2 en cours,
+      Préavis PM3 en cours
+    ]
+    R_POINTE: [
+      Pas de pointe mobile,
+      PM 1 en cours,
+      PM 2 en cours,
+      PM 3 en cours
+    ]
+
+mqtt:
+  send_data: true
+  server_ip: 192.168.1.33
+  port: 1883
+  keepalive: 45
+  user:
+  password:
+
+ha:
+  reset_discovery: false
+  key_mapping:
+    ADSC:
+      name: Adresse secondaire compteur
+      type: sensor
+    VTIC:
+      name: Version TIC
+      type: sensor
+    NGTF:
+      name: Nom calendrier tarifaire fournisseur
+      type: sensor
+    LTARF:
+      name: Tarif en cours
+      type: sensor
+    EAST:
+      name: Energie Soutirée totale
+      type: sensor
+      device_class: energy
+      unit_of_measurement: Wh
+      state_class: total_increasing
+    EASF01:
+      name: Index Bleu HC
+      type: sensor
+      device_class: energy
+      unit_of_measurement: Wh
+      state_class: total_increasing
+    EASF02:
+      name: Index Bleu HP
+      type: sensor
+      device_class: energy
+      unit_of_measurement: Wh
+      state_class: total_increasing
+    EASF03:
+      name: Index Blanc HC
+      type: sensor
+      device_class: energy
+      unit_of_measurement: Wh
+      state_class: total_increasing
+    EASF04:
+      name: Index Blanc HP
+      type: sensor
+      device_class: energy
+      unit_of_measurement: Wh
+      state_class: total_increasing
+    EASF05:
+      name: Index Rouge HC
+      type: sensor
+      device_class: energy
+      unit_of_measurement: Wh
+      state_class: total_increasing
+    EASF06:
+      name: Index Rouge HP
+      type: sensor
+      device_class: energy
+      unit_of_measurement: Wh
+      state_class: total_increasing
+    EASF07:
+      name: Energie Soutirée Fournisseur index 7
+      type: sensor
+      device_class: energy
+      unit_of_measurement: Wh
+      state_class: total_increasing
+    EASF08:
+      name: Energie Soutirée Fournisseur index 8
+      type: sensor
+      device_class: energy
+      unit_of_measurement: Wh
+      state_class: total_increasing
+    EASF09:
+      name: Energie Soutirée Fournisseur index 9
+      type: sensor
+      device_class: energy
+      unit_of_measurement: Wh
+      state_class: total_increasing
+    EASF10:
+      name: Energie Soutirée Fournisseur index 10
+      type: sensor
+      device_class: energy
+      unit_of_measurement: Wh
+      state_class: total_increasing
+    EASD01:
+      name: Energie Soutirée Distributeur index 1
+      type: sensor
+      device_class: energy
+      unit_of_measurement: Wh
+      state_class: total_increasing
+    EASD02:
+      name: Energie Soutirée Distributeur index 2
+      type: sensor
+      device_class: energy
+      unit_of_measurement: Wh
+      state_class: total_increasing
+    EASD03:
+      name: Energie Soutirée Distributeur index 3
+      type: sensor
+      device_class: energy
+      unit_of_measurement: Wh
+      state_class: total_increasing
+    EASD04:
+      name: Energie Soutirée Distributeur index 4
+      type: sensor
+      device_class: energy
+      unit_of_measurement: Wh
+      state_class: total_increasing
+    IRMS1:
+      name: Courant efficace
+      type: sensor
+      device_class: current
+      unit_of_measurement: A
+      state_class: measurement
+    URMS1:
+      name: Tension efficace
+      type: sensor
+      device_class: voltage
+      unit_of_measurement: V
+      state_class: measurement
+    PREF:
+      name: Puissance de reference
+      type: sensor
+      device_class: apparent_power
+      unit_of_measurement: kVA
+    PCOUP:
+      name: Puissance de coupure
+      type: sensor
+      device_class: apparent_power
+      unit_of_measurement: kVA      
+    SINSTS:
+      name: Puissance apparente instantanée soutirée
+      type: sensor
+      device_class: apparent_power
+      unit_of_measurement: VA
+      state_class: measurement
+    SMAXSN:
+      name: Puissance max soutirée jour courant
+      type: sensor
+      device_class: power
+      unit_of_measurement: VA
+      state_class: measurement
+    SMAXSN-1:
+      name: Puissance max soutirée la veille
+      type: sensor
+      device_class: power
+      unit_of_measurement: VA
+      state_class: measurement
+    CCASN:
+      name: Conso derniere demi-heure
+      type: sensor
+      device_class: power
+      unit_of_measurement: W
+      state_class: measurement
+    UMOY1:
+      name: Tension moyenne
+      type: sensor
+      device_class: voltage
+      unit_of_measurement: V
+      state_class: measurement
+    MSG1:
+      name: Message court
+      type: text
+    PRM:
+      name: PRM
+      type: text
+    RELAIS:
+      name: Relais
+      type: sensor
+    NTARF:
+      name: Index Tarifaire en cours
+      type: sensor
+    NJOURF:
+      name: Numero jour en cours
+      type: sensor
+    NJOURF+1:
+      name: Numero prochain jour
+      type: sensor  
+    PJOURF+1:
+      name: Profil prochain jour
+      type: text  
+    PPOINTE:
+      name: Profil prochain jour de pointe
+      type: text  
+    R_CONTACT_SEC:
+      name: Contact sec
+      type: binary_sensor
+      payload_on: 1
+      payload_off: 0
+      device_class: opening
+    R_COUPURE:
+      name: Organe de coupure  
+      type: sensor
+    R_CACHE:
+      name: Etat cache-bornes
+      type: binary_sensor
+      payload_on: 1
+      payload_off: 0 
+      device_class: opening
+    R_SURTENSION:
+      name: Surtension
+      type: binary_sensor
+      payload_on: 1
+      payload_off: 0
+      device_class: problem
+    R_DEPASSEMENT:
+      name: Dépassement puissance de référence
+      type: binary_sensor
+      payload_on: 1
+      payload_off: 0
+      device_class: problem
+    R_ETAT_HORLOGE:
+      name: Etat horloge
+      type: binary_sensor
+      payload_on: 1
+      payload_off: 0
+      device_class: problem
+    R_MODE:
+      name: Mode TIC
+      type: sensor
+    R_COMM:
+      name: Etat communication Euridis
+      type: sensor
+    R_CPL:
+      name: Statut CPL
+      type: sensor
+    R_CPL_SYNC:
+      name: Synchro CPL
+      type: binary_sensor
+      payload_on: 1
+      payload_off: 0
+    R_COULEUR_J:
+      name: Couleur du jour
+      type: sensor
+    R_COULEUR_J+1:
+      name: Couleur demain
+      type: sensor
+    R_PREAVIS_POINTE:
+      name: Préavis pointe mobile
+      type: sensor
+    R_POINTE:
+      name: Pointe mobile
+      type: sensor
+    C_CONSO_INST:
+      name: Consommation instantanée
+      device_class: power
+      unit_of_measurement: W
+      state_class: measurement
+      type: sensor
