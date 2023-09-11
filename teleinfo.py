@@ -303,15 +303,14 @@ if __name__ == '__main__':
         raise SystemExit(1)
 
     try:
-        log_level = cfg.get('log_level', 'info')
-        logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+        log_level = os.environ.get("LOG_LEVEL", cfg.get('log_level', 'info'))
         linky_legacy_mode = cfg['linky']['legacy_mode']
         linky_ignored_keys = cfg['linky']['ignored_keys']
         linky_port = os.environ.get("LINKY_PORT", cfg['linky']['port'])
         linky_register_mapping = cfg['linky']['register_mapping']
         ha_reset_discovery = cfg['ha']['reset_discovery']
         ha_key_mapping = cfg['ha']['key_mapping']
-        mqtt_send_data = cfg['mqtt'].get('send_data',true)
+        mqtt_send_data = cfg['mqtt'].get('send_data',True)
         mqtt_server = os.environ.get("MQTT_IP", cfg['mqtt']['server_ip']) 
         mqtt_port = int(os.environ.get("MQTT_PORT", cfg['mqtt']['port']))      
         mqtt_keepalive = int(cfg['mqtt']['keepalive']) 
