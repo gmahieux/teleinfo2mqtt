@@ -1,6 +1,9 @@
 ## Teleinfo 2 MQTT
 
 ![Docker image](https://github.com/gmahieux/teleinfo2mqtt/actions/workflows/docker-publish.yml/badge.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![GitHub Release](https://img.shields.io/github/release/gmahieux/teleinfo2mqtt.svg?style=flat)
+[![Issues](https://img.shields.io/github/issues-raw/gmahieux/teleinfo2mqtt.svg?maxAge=25000)](https://github.com/gmahieux/teleinfo2mqtt/issues)  
 
 This project allows retrieving Linky's teleinfo data and send it to MQTT so that it can be plug, for example, to Home Assistant.
 
@@ -46,7 +49,7 @@ The script needs some dependencies to run. They can be installed with the follow
 
 #### Run the script
 
-- Download `teleinfo.py` and `config.yml`, put them on the machine connected to your linky
+- Download the [sources from latest release](https://github.com/gmahieux/teleinfo2mqtt/releases/latest) and extract it (at least `teleinfo.py` and `config.yml`) on the machine connected to your linky
 - Update the [configuration](#configuration)
 - Run `python teleinfo.py`
 
