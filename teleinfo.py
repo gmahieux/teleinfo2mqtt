@@ -55,7 +55,7 @@ def _readframe(ser):
             logging.debug(f'Received frame {line}')
 
             # cleanup + ascii conversion
-            line_str = line.replace(STOP_FRAME,b'').replace(START_FRAME,b'').decode('ascii').rstrip()
+            line_str = ''.join(line.replace(STOP_FRAME,b'').replace(START_FRAME,b'').decode('ascii').splitlines())
 
             parts = line_str.split(separator)
             key = parts[0]
