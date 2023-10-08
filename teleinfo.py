@@ -158,7 +158,7 @@ def linky():
             frame_window = deque([],40)
             while True:                
                 frame = _readframe(ser)
-                if ("EAST" in frame):
+                if ("EAST" in frame and "EAIT" in frame):
                     frame_window.appendleft(frame)
                 if(len(frame_window) > 5):
                     consumption =get_consumption(frame_window)
