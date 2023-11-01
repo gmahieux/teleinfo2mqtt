@@ -72,7 +72,7 @@ def _readframe(ser):
             if (key == 'STGE') or (key == 'DATE') or (key not in linky_ignored_keys):       
                 if _checksum(key, date, val, separator, checksum): 
                     if (key == 'DATE'):
-                        frame["DATE"]=datetime.strptime(date, 'E%y%m%d%H%M%S').strftime('%Y-%m-%d %H:%M:%S')  
+                        frame["DATE"]=datetime.strptime(date[1:], '%y%m%d%H%M%S').strftime('%Y-%m-%d %H:%M:%S')  
                     elif (key == 'STGE'):
                         register = _reverse(_hex_to_binary(val))
                         frame["R_CONTACT_SEC"]=int(register[0])
