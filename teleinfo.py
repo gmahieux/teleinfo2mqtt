@@ -107,17 +107,10 @@ def _readframe(ser):
         except Exception as e:
             logging.error(f'Unexpected error : {e}', exc_info=True)
 
-def enrich_frame(prev_frame, cur_frame):
-    consumed = cur_frame["EAST"] - prev_frame["EAST"]
-    time = (datetime.fromisoformat(cur_frame["DATE"]) - datetime.fromisoformat(prev_frame["DATE"])).total_seconds()
-    consumption = consumed * 3600 / time
-    logging.info(f'consumed : {consumed}, time: {time}, consumption: {consumption}')
-    return cur_frame
-
 def get_consumption(frame_window):
     last = frame_window[0]
     curindex = 1
-    while (curindex < len(frame_window) and last["EAST"]==frame_window[curindex]["EAST"]):
+    while (curindex < len(frame_window) and last["EAST"] == frame_window[curindex]["EAST"] and last["EAIT"] == frame_window[curindex]["EAIT"]):
         last = frame_window[curindex]
         curindex += 1
         
@@ -126,21 +119,23 @@ def get_consumption(frame_window):
         cur_frame = frame_window[curindex]
         duration_between_measures = (datetime.fromisoformat(last["DATE"]) - datetime.fromisoformat(cur_frame["DATE"])).total_seconds()
         consumption_between_measures = last["EAST"] - cur_frame["EAST"]
-        if (curindex == len(frame_window) or (duration_between_measures >= 15 and consumption_between_measures >= 2)):
+        injection_between_measures = last["EAIT"] - cur_frame["EAIT"]
+        if (curindex == len(frame_window) or (duration_between_measures >= 15 and (consumption_between_measures >= 2 or injection_between_measures >= 2))):
             first = cur_frame
         curindex += 1
     
-    while (curindex < len(frame_window) and first["EAST"]==frame_window[curindex]["EAST"]):
+    while (curindex < len(frame_window) and first["EAST"] == frame_window[curindex]["EAST"] and first["EAIT"] == frame_window[curindex]["EAIT"]):
        first = frame_window[curindex]
        curindex += 1
     
     consumed = last["EAST"] - first["EAST"]
+    injected = last["EAIT"] - first["EAIT"]
     time = (datetime.fromisoformat(last["DATE"]) - datetime.fromisoformat(first["DATE"])).total_seconds()
     if (time == 0) :
         logging.info(f'no consumption recorded, first ands last frame time are the same')
         return 0
-    consumption = round(consumed * 3600 / time)
-    logging.info(f'consumed : {consumed}, time: {time}, consumption: {consumption}')
+    consumption = round((consumed - injected) * 3600 / time)
+    logging.info(f'consumed : {consumed}, injected: {injected}, time: {time}, consumption: {consumption}')
     return consumption
     
 
@@ -163,7 +158,7 @@ def linky():
             frame_window = deque([],40)
             while True:                
                 frame = _readframe(ser)
-                if ("EAST" in frame):
+                if ("EAST" in frame and "EAIT" in frame):
                     frame_window.appendleft(frame)
                 if(len(frame_window) > 5):
                     consumption =get_consumption(frame_window)
