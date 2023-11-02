@@ -110,7 +110,7 @@ def _readframe(ser):
 def get_consumption(frame_window):
     last = frame_window[0]
     curindex = 1
-    while (curindex < len(frame_window) and last["EAST"] == frame_window[curindex]["EAST"] and last["EAIT"] == frame_window[curindex]["EAIT"]):
+    while (curindex < len(frame_window) and last["EAST"] == frame_window[curindex]["EAST"] and last.get("EAIT", 0) == frame_window[curindex].get("EAIT", 0)):
         last = frame_window[curindex]
         curindex += 1
         
@@ -119,17 +119,17 @@ def get_consumption(frame_window):
         cur_frame = frame_window[curindex]
         duration_between_measures = (datetime.fromisoformat(last["DATE"]) - datetime.fromisoformat(cur_frame["DATE"])).total_seconds()
         consumption_between_measures = last["EAST"] - cur_frame["EAST"]
-        injection_between_measures = last["EAIT"] - cur_frame["EAIT"]
+        injection_between_measures =last.get("EAIT", 0) - cur_frame.get("EAIT", 0)
         if (curindex == len(frame_window) or (duration_between_measures >= 15 and (consumption_between_measures >= 2 or injection_between_measures >= 2))):
             first = cur_frame
         curindex += 1
     
-    while (curindex < len(frame_window) and first["EAST"] == frame_window[curindex]["EAST"] and first["EAIT"] == frame_window[curindex]["EAIT"]):
+    while (curindex < len(frame_window) and first["EAST"] == frame_window[curindex]["EAST"] and first.get("EAIT",0) == frame_window[curindex].get("EAIT", 0)):
        first = frame_window[curindex]
        curindex += 1
     
     consumed = last["EAST"] - first["EAST"]
-    injected = last["EAIT"] - first["EAIT"]
+    injected = last.get("EAIT", 0) - first.get("EAIT", 0)
     time = (datetime.fromisoformat(last["DATE"]) - datetime.fromisoformat(first["DATE"])).total_seconds()
     if (time == 0) :
         logging.info(f'no consumption recorded, first ands last frame time are the same')
@@ -158,7 +158,7 @@ def linky():
             frame_window = deque([],40)
             while True:                
                 frame = _readframe(ser)
-                if ("EAST" in frame and "EAIT" in frame):
+                if ("EAST" in frame):
                     frame_window.appendleft(frame)
                 if(len(frame_window) > 5):
                     consumption =get_consumption(frame_window)
