@@ -80,6 +80,7 @@ def _readframe(ser):
                         frame["R_CACHE"]=int(register[4])
                         frame["R_SURTENSION"]=int(register[6])
                         frame["R_DEPASSEMENT"]=int(register[7])
+                        frame["R_INJECTION"]=int(register[9])
                         frame["R_TARIF_FOUR"]=linky_register_mapping["R_TARIF_FOUR"][_bin_to_decimal(_reverse(register[10:14]))]
                         frame["R_TARIF_DIST"]=linky_register_mapping["R_TARIF_DIST"][_bin_to_decimal(_reverse(register[14:16]))]
                         frame["R_ETAT_HORLOGE"]=int(register[16])
