@@ -248,14 +248,14 @@ def send_autodiscovery_messages():
             logging.debug('Sending autodiscover for ' + mqtt_config_topic)
             publish_message(json.dumps(discovery_message), mqtt_config_topic)       
 
-def on_connect(client, userdata, flags, rc):
+def on_connect(client, userdata, flags, reason_code):
     logging.info('Connected to MQTT broker')
     publish_message("online","linky/status")
     send_autodiscovery_messages()
     
    
-def on_disconnect(client, userdata, rc):
-    if rc != 0:
+def on_disconnect(client, userdata, reason_code):
+    if reason_code != 0:
         logging.warning('Unexpected disconnection from MQTT, trying to reconnect')
         recon()
 
@@ -328,7 +328,7 @@ if __name__ == '__main__':
     if mqtt_send_data:
         # Connexion à MQTT
         logging.info('Initiating MQTT connection')
-        mqttc = mqtt.Client('Linky')
+        mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1,'Linky')
         if  mqtt_user != False and mqtt_password != False :
             mqttc.username_pw_set(mqtt_user,mqtt_password)
 
