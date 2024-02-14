@@ -284,6 +284,11 @@ ha:
       payload_on: 1
       payload_off: 0
       device_class: problem
+    R_INJECTION:
+      name: Injection
+      type: binary_sensor
+      payload_on: 1
+      payload_off: 0      
     R_ETAT_HORLOGE:
       name: Etat horloge
       type: binary_sensor
