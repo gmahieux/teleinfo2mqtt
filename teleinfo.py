@@ -328,7 +328,7 @@ if __name__ == '__main__':
     if mqtt_send_data:
         # Connexion à MQTT
         logging.info('Initiating MQTT connection')
-        mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1,'Linky')
+        mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2,'Linky')
         if  mqtt_user != False and mqtt_password != False :
             mqttc.username_pw_set(mqtt_user,mqtt_password)
 
