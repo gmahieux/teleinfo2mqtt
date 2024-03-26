@@ -156,7 +156,7 @@ def linky():
             while START_FRAME not in line:
                 line = ser.readline()
 
-            frame_window = deque([],40)
+            frame_window = deque([],100)
             while True:                
                 frame = _readframe(ser)
                 if ("EAST" in frame):
