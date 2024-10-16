@@ -2,7 +2,8 @@ log_level: info
 
 linky:
   legacy_mode: false            # Mode TIC historique = true, sinon false
-  ignored_keys: [SMAXSN-1, SINST]
+  ignored_standard_keys: [SMAXSN-1, SINST]
+  ignored_historic_keys: []
   port: '/dev/serial/by-id/usb-CH2i_uTinfo-V3.0_TINFO-1300-if00'    # Port série du Raspberry Pi
   register_mapping:
     R_COUPURE: [
@@ -78,7 +79,177 @@ mqtt:
 
 ha:
   reset_discovery: false
-  key_mapping:
+  historic_key_mapping:
+    ADCO:
+      name: Adresse du compteur
+      type: sensor
+    ADIR1:
+      name: Avertissement de Dépassement d'intensité de réglage par phase
+      type: sensor
+      device_class: current
+      unit_of_measurement: A
+    ADIR2:
+      name: Avertissement de Dépassement d'intensité de réglage par phase
+      type: sensor
+      device_class: current
+      unit_of_measurement: A
+    ADIR3:
+      name: Avertissement de Dépassement d'intensité de réglage par phase
+      type: sensor
+      device_class: current
+      unit_of_measurement: A
+    ADPS:
+      name: Avertissement de Dépassement De Puissance Souscrite
+      type: sensor
+      device_class: current
+      unit_of_measurement: A
+    BASE:
+      name: Index option Base
+      type: sensor
+      device_class: energy
+      state_class: total_increasing
+      unit_of_measurement: Wh
+    BBRHCJB:
+      name: Index option Tempo Heures Creuses Jours Bleus
+      type: sensor
+      device_class: energy
+      state_class: total_increasing
+      unit_of_measurement: Wh
+    BBRHCJR:
+      name: Index option Tempo Heures Creuses Jours Rouges
+      type: sensor
+      device_class: energy
+      state_class: total_increasing
+      unit_of_measurement: Wh
+    BBRHCJW:
+      name: Index option Tempo Heures Creuses Jours Blancs
+      type: sensor
+      device_class: energy
+      state_class: total_increasing
+      unit_of_measurement: Wh
+    BBRHPJB:
+      name: Index option Tempo Heures Pleines Jours Bleus
+      type: sensor
+      device_class: energy
+      state_class: total_increasing
+      unit_of_measurement: Wh
+    BBRHPJR:
+      name: Index option Tempo Heures Pleines Jours Rouges
+      type: sensor
+      device_class: energy
+      state_class: total_increasing
+      unit_of_measurement: Wh
+    BBRHPJW:
+      name: Index option Tempo Heures Pleines Jours Blancs
+      type: sensor
+      device_class: energy
+      state_class: total_increasing
+      unit_of_measurement: Wh
+    DEMAIN:
+      name: Couleur du lendemain
+      type: sensor
+    EJPHN:
+      name: Index option EJP heures normales
+      type: sensor
+      device_class: energy
+      state_class: total_increasing
+      unit_of_measurement: Wh
+    EJPHPM:
+      name: Index option EJP heures de pointe mobile
+      type: sensor
+      device_class: energy
+      state_class: total_increasing
+      unit_of_measurement: Wh
+    HCHC:
+      name: Index option Heures Creuses
+      type: sensor
+      device_class: energy
+      state_class: total_increasing
+      unit_of_measurement: Wh
+    HCHP:
+      name: Index option Heures Pleines
+      type: sensor
+      device_class: energy
+      state_class: total_increasing
+      unit_of_measurement: Wh
+    HHPHC:
+      name: Horaire Heures Pleines Heures Creuses
+      type: sensor
+    IINST:
+      name: Intensité Instantanée
+      type: sensor
+      device_class: current
+      state_class: measurement
+      unit_of_measurement: A
+    IINST1:
+      name: Intensité Instantanée pour la phase 1
+      type: sensor
+      device_class: current
+      state_class: measurement
+      unit_of_measurement: A
+    IINST2:
+      name: Intensité Instantanée pour la phase 2
+      type: sensor
+      device_class: current
+      state_class: measurement
+      unit_of_measurement: A
+    IINST3:
+      name: Intensité Instantanée pour la phase 3
+      type: sensor
+      device_class: current
+      state_class: measurement
+      unit_of_measurement: A
+    IMAX:
+      name: Intensité maximale appelée
+      type: sensor
+      device_class: current
+      unit_of_measurement: A
+    IMAX1:
+      name: Intensité maximale par phase 1
+      type: sensor
+      device_class: current
+      unit_of_measurement: A
+    IMAX2:
+      name: Intensité maximale par phase 2
+      type: sensor
+      device_class: current
+      unit_of_measurement: A
+    IMAX3:
+      name: Intensité maximale par phase 3
+      type: sensor
+      device_class: current
+      unit_of_measurement: A
+    ISOUSC:
+      name: Intensité souscrite
+      type: sensor
+      device_class: current
+      unit_of_measurement: A
+    MOTDETAT:
+      name: Mot d'état du compteur
+      type: sensor
+    OPTARIF:
+      name: Option tarifaire choisie
+      type: sensor
+    PAPP:
+      name: Puissance apparente
+      type: sensor
+      device_class: apparent_power
+      unit_of_measurement: VA
+      state_class: measurement
+    PEJP:
+      name: Préavis Début EJP (30 min)
+      type: sensor
+      unit_of_measurement: min
+    PMAX:
+      type: sensor
+      device_class: power
+      unit_of_measurement: W
+    PPOT:
+      type: sensor
+    PTEC:
+      name: Période Tarifaire en cours
+      type: sensor
+  standard_key_mapping:
     ADSC:
       name: Adresse secondaire compteur
       type: sensor

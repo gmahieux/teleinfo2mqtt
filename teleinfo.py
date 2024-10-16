@@ -52,7 +52,6 @@ def _readframe(ser):
     while True:
         try:
             line = ser.readline()
-            logging.debug(f'Received frame {line}')
 
             # cleanup + ascii conversion
             line_str = ''.join(line.replace(STOP_FRAME,b'').replace(START_FRAME,b'').decode('ascii').splitlines())
@@ -68,41 +67,52 @@ def _readframe(ser):
             checksum = parts[-1]
             logging.debug(f'Raw data line received: {line_str}, key: {key}, date: {date}, value: {val}, checksum: {checksum}, parts: {len(parts)}.')
 
-            
-            if (key == 'STGE') or (key == 'DATE') or (key not in linky_ignored_keys):       
-                if _checksum(key, date, val, separator, checksum): 
-                    if (key == 'DATE'):
-                        frame["DATE"]=datetime.strptime(date[1:], '%y%m%d%H%M%S').strftime('%Y-%m-%d %H:%M:%S')  
-                    elif (key == 'STGE'):
-                        register = _reverse(_hex_to_binary(val))
-                        frame["R_CONTACT_SEC"]=int(register[0])
-                        frame["R_COUPURE"]=linky_register_mapping["R_COUPURE"][_bin_to_decimal(_reverse(register[1:4]))]
-                        frame["R_CACHE"]=int(register[4])
-                        frame["R_SURTENSION"]=int(register[6])
-                        frame["R_DEPASSEMENT"]=int(register[7])
-                        frame["R_INJECTION"]=int(register[9])
-                        frame["R_TARIF_FOUR"]=linky_register_mapping["R_TARIF_FOUR"][_bin_to_decimal(_reverse(register[10:14]))]
-                        frame["R_TARIF_DIST"]=linky_register_mapping["R_TARIF_DIST"][_bin_to_decimal(_reverse(register[14:16]))]
-                        frame["R_ETAT_HORLOGE"]=int(register[16])
-                        frame["R_MODE"]=linky_register_mapping["R_MODE"][int(register[17])]
-                        frame["R_COMM"]=linky_register_mapping["R_COMM"][_bin_to_decimal(_reverse(register[19:21]))]
-                        frame["R_CPL"]=linky_register_mapping["R_CPL"][_bin_to_decimal(_reverse(register[21:23]))]
-                        frame["R_CPL_SYNC"]=int(register[23])
-                        frame["R_COULEUR_J"]=linky_register_mapping["R_COULEUR_J"][_bin_to_decimal(_reverse(register[24:26]))]
-                        frame["R_COULEUR_J+1"]=linky_register_mapping["R_COULEUR_J"][_bin_to_decimal(_reverse(register[26:28]))]
-                        frame["R_PREAVIS_POINTE"]=linky_register_mapping["R_PREAVIS_POINTE"][_bin_to_decimal(_reverse(register[28:30]))]
-                        frame["R_POINTE"]=linky_register_mapping["R_POINTE"][_bin_to_decimal(_reverse(register[30:32]))]
+            if linky_legacy_mode:
+                if len(parts) != 3:
+                    logging.debug(f"line has {len(parts)} parts, not 3")
+                    continue
+                if _checksum(key, date, val, separator, checksum) == False:
+                    logging.warning(f"invalid checksum found for line {line_str}")
+                    continue
+                try:
+                    frame[key] = int(val)
+                except:
+                    frame[key] = val.strip()
+            else:
+                if (key == 'STGE') or (key == 'DATE') or (key not in linky_ignored_keys):       
+                    if _checksum(key, date, val, separator, checksum): 
+                        if (key == 'DATE'):
+                            frame["DATE"]=datetime.strptime(date[1:], '%y%m%d%H%M%S').strftime('%Y-%m-%d %H:%M:%S')  
+                        elif (key == 'STGE'):
+                            register = _reverse(_hex_to_binary(val))
+                            frame["R_CONTACT_SEC"]=int(register[0])
+                            frame["R_COUPURE"]=linky_register_mapping["R_COUPURE"][_bin_to_decimal(_reverse(register[1:4]))]
+                            frame["R_CACHE"]=int(register[4])
+                            frame["R_SURTENSION"]=int(register[6])
+                            frame["R_DEPASSEMENT"]=int(register[7])
+                            frame["R_INJECTION"]=int(register[9])
+                            frame["R_TARIF_FOUR"]=linky_register_mapping["R_TARIF_FOUR"][_bin_to_decimal(_reverse(register[10:14]))]
+                            frame["R_TARIF_DIST"]=linky_register_mapping["R_TARIF_DIST"][_bin_to_decimal(_reverse(register[14:16]))]
+                            frame["R_ETAT_HORLOGE"]=int(register[16])
+                            frame["R_MODE"]=linky_register_mapping["R_MODE"][int(register[17])]
+                            frame["R_COMM"]=linky_register_mapping["R_COMM"][_bin_to_decimal(_reverse(register[19:21]))]
+                            frame["R_CPL"]=linky_register_mapping["R_CPL"][_bin_to_decimal(_reverse(register[21:23]))]
+                            frame["R_CPL_SYNC"]=int(register[23])
+                            frame["R_COULEUR_J"]=linky_register_mapping["R_COULEUR_J"][_bin_to_decimal(_reverse(register[24:26]))]
+                            frame["R_COULEUR_J+1"]=linky_register_mapping["R_COULEUR_J"][_bin_to_decimal(_reverse(register[26:28]))]
+                            frame["R_PREAVIS_POINTE"]=linky_register_mapping["R_PREAVIS_POINTE"][_bin_to_decimal(_reverse(register[28:30]))]
+                            frame["R_POINTE"]=linky_register_mapping["R_POINTE"][_bin_to_decimal(_reverse(register[30:32]))]
+                        else:
+                            try:
+                                frame[key] = int(val)
+                            except:
+                                frame[key] = val.strip()
                     else:
-                        try:
-                            frame[key] = int(val)
-                        except:
-                            frame[key] = val.strip()
-                else:
-                    logging.error(f'Invalid checksum for key {key} : {line_str}')
+                        logging.error(f'Invalid checksum for key {key} : {line_str}')
             
             if STOP_FRAME in line:            
-                logging.info(f'Frame from {frame["DATE"]} processed ({len(frame)} keys retained)')
-                logging.debug(f'Read data: {frame}')
+                logging.info(f'Frame processed ({len(frame)} keys retained)')
+                logging.debug(f'Frame content: {frame}')
                 return frame
 
         except Exception as e:
@@ -254,7 +264,7 @@ def on_connect(client, userdata, flags, reason_code, properties):
     send_autodiscovery_messages()
     
    
-def on_disconnect(client, userdata, reason_code, properties):
+def on_disconnect(client, userdata, disconnect_flags, reason_code, properties):
     if reason_code != 0:
         logging.warning('Unexpected disconnection from MQTT, trying to reconnect')
         recon()
@@ -301,11 +311,11 @@ if __name__ == '__main__':
     try:
         log_level = os.environ.get("LOG_LEVEL", cfg.get('log_level', 'info'))
         linky_legacy_mode = cfg['linky']['legacy_mode']
-        linky_ignored_keys = cfg['linky']['ignored_keys']
+        linky_ignored_keys = cfg['linky']['ignored_historic_keys'] if linky_legacy_mode else cfg['linky']['ignored_standard_keys']
         linky_port = os.environ.get("LINKY_PORT", cfg['linky']['port'])
         linky_register_mapping = cfg['linky']['register_mapping']
         ha_reset_discovery = cfg['ha']['reset_discovery']
-        ha_key_mapping = cfg['ha']['key_mapping']
+        ha_key_mapping = cfg['ha']['historic_key_mapping'] if linky_legacy_mode else cfg['ha']['standard_key_mapping']
         mqtt_send_data = cfg['mqtt'].get('send_data',True)
         mqtt_server = os.environ.get("MQTT_IP", cfg['mqtt']['server_ip']) 
         mqtt_port = int(os.environ.get("MQTT_PORT", cfg['mqtt']['port']))      
