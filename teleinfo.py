@@ -52,7 +52,9 @@ def _readframe(ser):
     while True:
         try:
             line = ser.readline()
-
+            if line == "":
+                frame['OFFLINE']=True
+                return frame
             # cleanup + ascii conversion
             line_str = ''.join(line.replace(STOP_FRAME,b'').replace(START_FRAME,b'').decode('ascii').splitlines())
 
@@ -165,18 +167,25 @@ def linky():
             line = ser.readline()
             while START_FRAME not in line:
                 line = ser.readline()
-
+            offline = False
             frame_window = deque([],100)
             while True:                
                 frame = _readframe(ser)
-                if ("EAST" in frame):
-                    frame_window.appendleft(frame)
-                if(len(frame_window) > 5):
-                    consumption =get_consumption(frame_window)
-                    if (consumption is not None):
-                        frame["C_CONSO_INST"] =consumption
-                if mqtt_send_data:
-                    _send_to_mqtt(frame)                
+                if("OFFLINE" in frame):
+                    offline = True
+                    publish_message("offline","linky/status")
+                else:
+                    if (offline):
+                        offline = False
+                        publish_message("online","linky/status")
+                    if ("EAST" in frame):
+                        frame_window.appendleft(frame)
+                    if(len(frame_window) > 5):
+                        consumption =get_consumption(frame_window)
+                        if (consumption is not None):
+                            frame["C_CONSO_INST"] =consumption
+                    if mqtt_send_data:
+                        _send_to_mqtt(frame)                
                 
 
     except termios.error as exc:
