@@ -72,3 +72,16 @@ You can either modify the `config.yml` file directly. However, the most interest
 | mqtt.password          | MQTT_PWD   | The password to use while connecting to MQTT server
 | ha.reset_discovery     | N/A        | Set to `false` to delete the aautodiscovery message fro MQTT. The effect is is will remove the Linky device from HomeAssistant
 | ha.key_mapping         | N/A        | Maps the TIC key to informations used in HA discovery messages to automatically create entities
+
+
+
+## Greetings
+
+The code in this repo is inspired from the great job done on those projects :
+
+- https://github.com/hleroy/teleinfo-linky/
+- https://github.com/fmartinou/teleinfo2mqtt
+
+## License
+
+This project is licensed under the MIT license.
