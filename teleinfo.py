@@ -6,6 +6,7 @@ import time
 import json
 import termios
 import os
+import sys
 from collections import deque
 from datetime import datetime
 
@@ -119,6 +120,8 @@ def _readframe(ser):
 
         except Exception as e:
             logging.error(f'Unexpected error : {e}', exc_info=True)
+            logging.shutdown()
+            sys.exit(1)
 
 def get_consumption(frame_window):
     last = frame_window[0]
